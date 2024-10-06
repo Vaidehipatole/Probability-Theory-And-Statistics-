@@ -1,0 +1,217 @@
+---
+
+
+<CENTER>
+<FONT SIZE=4, COLOR="#8272E9">
+<B>Vaidehi Patole</b>
+<BR>
+<BR><B>Probability Theory and Introductory to Statistics</B> <BR>
+<B>M1 Project Report</B><BR>
+<BR>
+<B>ALY6010 - 70487 </B>
+<BR>
+<B>Northeastern University</B>
+<BR>
+<B>Dr. Dee Chiluiza, PhD</B>
+<BR>
+`r format(Sys.time(), "%d %B, %Y")`
+</CENTER></FONT></B>
+<P>
+<FONT SIZE=4, COLOR="#8272E9"><B>INTRODUCTION</B></FONT>
+<P>
+
+<b>Global car sales Market</b><br>
+Data release by International car market represent that after COVID it has been observed that sales of car rose drastically all around the globe. In Countries like China, India and USA it has been clearly seen increase in the sales of cars. Especially in India car sales rose drastically in the first half of 2021 and increased phenomenal by the second half of 2021. In addition, it has been clearly seen that china is market has recovered from 2020 losses sales were 27% high as compared to 2019. Moreover, data also depicts that in the USA despite having COVID restriction economy recovered very fast in the first six months of 2021 and sales increased by 29% in first six months of 2021.On the other hand, countries like Japan, brazil and in some parts of the Europe they are still recovering from damage caused by COVID.<br>
+<b>Car sales market in India</b><br>
+In India brands like Maruti Suzuki, Toyota, Mahindra and Hyundai has a biggest market including and luxury car manufacturers, such as BMW, Audi, and JLR. In the previous three years, the organized sales channel has seen substantial expansion. Increased sales of used automobiles in metro cities, as well as a surge in online sales platforms like CarDekho, Cars24, and Droom, are driving this growth.
+<b><br>Importance of discrete and continuous probability  </b><br>
+The definition of a random variable is a variable that can hold a variety of values based on the outcome of a random operation. However, it is unable to express the chance of receiving those various values.
+As a result, in any random process, probability distribution aids in the creation of a clear image of all the possible values and their respective likelihood of occurrence.
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library("dplyr")
+```
+
+```{r}
+library(readxl)
+data = read_excel("d:\\Users\\Admin\\Downloads\\car_sales_india.xlsx")
+```
+<b><br>Task 1  </b><br>
+
+```{r}
+counts <- table(data$Efficiency)
+#counts
+bar1=barplot(counts, main="Car Distribution",xlab="efficiency", col="red", ylim= c(0,2000))
+text(y=counts,bar1,counts, cex=0.8, pos = 3)
+
+```
+<b><br>Observation 1:</b><br>
+
+Looking forward to bar plot of efficiency, it has been clear and crystal that median of this graph is 18 which has a highest count of 1821 and on the other hand, we can see 30 has the lowest count number that is 4 and 8 has the 18 count number
+
+
+<b><br>Task 2  </b><br>
+```{r}
+counts <- table(data$Engine_cc)
+#counts
+bar2 = barplot(counts, main="Car Distribution",xlab="Engine_cc", col="blue",ylim= c(0,2000), las=2)
+text(y=counts,bar2,counts, cex=0.8, pos = 3)
+
+```
+<b><br>Observation 2:</b><br>
+
+
+This bar plot represents Engine cc number 1200 has the highest Enginee_cc that is of 1670 and lowest counts are 16,5,7.
+
+
+<b><br>Task 3  </b><br>
+```{r}
+counts <- table(data$Power_bhp)
+#counts
+bar3 = barplot(counts, main="Car Distribution",xlab="Power_bhp", col="green",ylim= c(0,3500) )
+text(y=counts,bar3,counts, cex=0.8, pos = 3)
+
+```
+<b><br>Observation 3:</b><br>
+In the bar plot of power bhp we can see number 100 has the highest count and after that number 150 has the highest count that is of 1549. On the other side, in the power_bph graph number 400,500,600 has the lowest count that is of 47, 7 and 5.
+
+<b><br>Task 4  </b><br>
+```{r}
+counts <- table(data$Seats)
+counts
+bar4 = barplot(counts, main="Car Distribution",xlab="Seats ", col=rainbow(6) ,ylim = c(0,5500) )
+text(y=counts,bar4,counts, cex=0.8, pos = 3)
+
+```
+<b><br>Observation 4:</b><br>
+In the above bar plot of it is clear that number 5 has the more seats than the other seats and number 5 is the median of the graph.
+
+
+
+<b><br>Task 5 </b><br>
+```{r}
+ 
+
+
+ef1 = as.data.frame(table(data$Efficiency))
+
+ef2 = data.frame(ef1$Var1, ef1$Freq)
+
+ef3 = rename(ef2, Efficiency = 
+ef1.Var1, Frequency = ef1.Freq)
+
+ef4 = ef3%>%
+  select(Efficiency, Frequency)%>%
+  mutate(Prob = round(Frequency/sum(Frequency),3))
+ knitr::kable(ef4)
+```
+
+
+<b><br>Task 6 </b><br>
+
+```{r}
+
+ecc1 = as.data.frame(table(data$Engine_cc))
+
+ecc2 = data.frame(ecc1$Var1, ecc1$Freq)
+
+ecc3 = rename(ecc2, Engine_cc = ecc1.Var1, Frequency = ecc1.Freq)
+
+ecc4 = ecc3%>%
+  select(Engine_cc, Frequency)%>%
+  mutate(Prob = round(Frequency/sum(Frequency),3))
+  
+
+knitr::kable(ecc4)
+
+```
+<b><br>Task 7  </b><br>
+```{r}
+
+bph1 = as.data.frame(table(data$Power_bhp))
+
+bph2 = data.frame(bph1$Var1, bph1$Freq)
+
+bph3 = rename(bph2,  Power_bhp= bph1.Var1, Frequency = bph1.Freq)
+
+bph4 = bph3%>%
+  select(Power_bhp, Frequency)%>%
+  mutate(Prob = round(Frequency/sum(Frequency),3))
+ knitr::kable(bph4)
+```
+
+<b><br>Task 8 </b><br>
+```{r}
+
+s1 = as.data.frame(table(data$Seats))
+
+s2 = data.frame(s1$Var1, s1$Freq)
+
+s3 = rename(s2,  Seats= s1.Var1, Frequency = s1.Freq)
+
+s4 = s3%>%
+  select(Seats, Frequency)%>%
+  mutate(Prob = round(Frequency/sum(Frequency),3))
+  knitr::kable(s4)
+
+```
+<b><br>Task 9 </b><br>
+```{r}
+par(mfrow = c(2,1),mai = c (1,1,1,1))
+hist(data$Km,
+main="Histogram for Kilometer", col.main ="Blue",
+xlab="Kilometers",
+col="darkmagenta"
+)
+boxplot(data$Km, main="Boxplot for Kilometer", col.main = "Red",
+        horizontal = TRUE
+  )
+
+
+```
+<b><br>Observation 9:</b><br>
+
+From the supplied data set, we arrive to the kilogram. This was divided into two plots by me. When looking at the boxplot, we can see that there are less km values from Q1 to Q4, and the majority of the values are outliers.
+Looking forward to plotting the histogram, which shows that the majority of the values are in the range of 0 to 10000.
+
+<b><br>Task 10 </b><br>
+
+
+```{r}
+par(mfrow = c(2,1),mai = c (1,1,1,1))
+hist(data$Price,
+main="Histogram for Price", col.main ="Blue",
+xlab="Price",
+col="chocolate",
+
+)
+
+summary(data$Price)
+boxplot(data$Price, main="Boxplot for Price", col.main = "Red",
+        horizontal = TRUE
+  )
+```
+
+<b><br>Observation 10:</b><br>
+In the above boxplot max value of price is 99663 which is on the right side of the histogram. In the boxplot most of the values lies in right hand side means it is positively skewed.
+
+<b><br>Conclusion:</b><br>
+In this project 1 first step was to take dataset in R and read that data after that data analysis is done on the cars sales in India using different types of the graphs used like bar plots, histogram and boxplot to shows different car information regarding engine_cc, Efficiency, Power, price and kilometre.
+
+<b><br>Bibliography:</b><br>
+1.Statista, Welcome, North-eastern University, Published by Mathilda Carlier, Nov 10,2021 https://www.statista.com/topics/1487/automotive-industry/#dossierKeyfigures
+
+2.India used car market -Growths ,Trends, Covid-19 impact and Forecasts(2021-2026) ,https://www.mordorintelligence.com/industry-reports/india-used-car-market
+
+3.Probability distribution discrete and continuous, Published by Semma Singh ,April3,2019 https://medium.com/@seema.singh/probability-distributions-discrete-and-continuous-7a94ede66dc0
+
+<b><br>Appendix</b><br>
+1.car_sales_india.xlsx<br>
+2.Project1_Vaidehi.Rmd
+
+
+
+

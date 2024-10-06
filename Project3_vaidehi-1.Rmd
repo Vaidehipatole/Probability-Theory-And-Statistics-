@@ -1,0 +1,489 @@
+<FONT SIZE=4, COLOR="#A11515"><CENTER><B>
+<P>
+
+<BR>
+ALY6010 Introduction to Analytics
+<BR>
+Northeastern University
+<BR>
+Dr. Dee Chiluiza, PhD
+<BR>
+Date of submission: 29 November 2021
+<BR>
+
+</CENTER>
+</FONT>
+</B>
+
+ <h1 style="text-align:center"> One-sample Confidence Intervals & Hypothesis Testing</h1>
+<h3 style="color:blue;"> <b>Introduction: <b></h3>
+
+<b>Confidence level</b><br>
+The confidence level in statistics refers to the likelihood that an estimate of the location of a statistical parameter (such as an arithmetic mean) in a sample survey is also true for the entire population.
+When conducting a survey, confidence levels must be defined ahead of time, as they determine the margin of error as well as the survey's required scope. Confidence levels of 90/95/99 percent are regularly employed in surveys.
+A determined statistical value based on a sample would also be true for the entire population within the established confidence level – with a 95 percent likelihood – if the confidence level was set at 95 percent. In other words, the chances of a population's arithmetic mean (as a statistical number) falling exactly within the margins of error specified for the survey based on a sample are extremely high.
+
+<b>An example:</b><br>
+
+A survey asked 2,000 Americans over 14 years, whether they were in favor of the smoking ban in restaurants. Overall, 75% of the respondents answered 'yes'. The confidence level for the survey had been set at 95%, the margin of error was set to 2%.
+
+Due to the confidence level, there is a probability of 95%, that the actual percentage of supporters is within a range of 73-77%, i.e. within the confidence interval (=result +/- margin of error). If we were to conduct the survey 100 times, each with 2,000 different participants, 95 times out of 100, the number of supporters would also be within 73-77% - 5 times out of 100, however, less or more people would answer 'yes'.
+
+<b> Hypothesis Testing </b>
+
+A hypothesis test is a statistical inference method for determining the significance of a proposed (hypothesized) relationship between population statistics (parameters) and the sample estimators that correspond to them. To put it another way, hypothesis tests are performed to see if a sample contains enough evidence to prove a hypothesis true for the entire population.
+The test evaluates two hypotheses: the null hypothesis, which is a statement that will be evaluated, such as "there is no effect," with the goal of proving it untrue, and the alternate hypothesis, which will be true when the test is completed. The two theories must be mutually exclusive; additionally, they are complementary in most situations (one being the negation of the other). The p-value is compared to the level of significance in this test (a chosen target). The null hypothesis is rejected if the pp-value is less than or equal to the level of significance.
+Only samples of a specific size may be managed as efficient computations when evaluating data. In some cases, the error terms have a continuous or infinite distribution, which is why samples are used to estimate the accuracy of the test statistics. The hypothesis testing method has an advantage over guessing what distribution or parameters the data will follow.
+
+
+
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+#libraries
+
+library("readxl")
+library("dplyr")
+library("readr")
+library("knitr")
+library("kableExtra")
+library("tidyverse")
+library("vcd")
+library("lessR")
+library("RColorBrewer")
+library("ggpubr")
+
+```
+
+
+
+```{r}
+data <- read_excel("DataSets/M3 Project Data.xlsx")
+
+#data = read_excel("data.xlsx", )
+#str(data)
+
+```
+
+
+<b><br>Task 1  </b><br>
+
+
+```{r}
+# 3.Calculate the sampling error.
+sample1 = na.omit(data$`Sample 1`)
+population_std  = sd(data$Population)
+population_mean = mean(data$Population)
+sampling_error = 1.96 * (population_std)/sqrt(length(sample1))
+print(paste("sampling error is ",sampling_error))
+
+#Calculate the 92% confidence intervals for the sample mean. For this, you need to:
+
+alpha92  = (1-0.92)/2
+Zscore92 = qnorm(1-alpha92)
+
+Sample_std = sd(sample1)
+Marginerror92 = Zscore92*Sample_std/sqrt(length(sample1))
+conf92_lower_limit =  mean(sample1) - Marginerror92
+conf92_upper_limit = mean(sample1) + Marginerror92
+conf92_width = conf92_upper_limit - conf92_lower_limit
+
+#Calculate the 96% confidence intervals for the sample mean. For this, you need to:
+
+alpha96  = (1-0.96)/2
+Zscore96 = qnorm(1-alpha96)
+
+Sample_std = sd(sample1)
+Marginerror96 = Zscore96*Sample_std/sqrt(length(sample1))
+conf96_lower_limit =  mean(sample1) - Marginerror96
+conf96_upper_limit = mean(sample1) + Marginerror96
+conf96_width = conf96_upper_limit - conf96_lower_limit
+
+#Calculate the 98% confidence intervals for the sample mean. For this, you need to:
+
+alpha98  = (1-0.98)/2
+Zscore98 = qnorm(1-alpha98)
+
+
+Sample_std = sd(sample1)
+Marginerror98 = Zscore98*Sample_std/sqrt(length(sample1))
+conf98_lower_limit =  mean(sample1) - Marginerror98
+conf98_upper_limit = mean(sample1) + Marginerror98
+conf98_width = conf98_upper_limit - conf98_lower_limit
+
+data92 = c(Marginerror92,conf92_lower_limit,mean(sample1),conf92_upper_limit,conf92_width,population_mean)
+data96 =c(Marginerror96,conf96_lower_limit,mean(sample1),conf96_upper_limit,conf96_width,population_mean)
+data98 = c(Marginerror98,conf98_lower_limit,mean(sample1),conf98_upper_limit,conf98_width,population_mean)
+conftable = matrix(c(data92,data96,data98),nrow= 3, byrow = TRUE)
+
+rownames(conftable) = c("92% confidence interval","96% confidence interval","98% confidence interval")
+colnames(conftable) = c("Margin of Error","Confidence interval upper limit","Sample mean","Cofidence interval lower limit","confidence interval width","population mean")
+
+knitr::kable(conftable, caption = "From the table we can see the at population mean lies in between the sample confidence intervals indicating that we can use sample 1 for deducing the characteristics of population.",caption.placement = "top")
+
+
+```
+<P>
+<FONT SIZE = 3>
+<B>Observation 1</B>: 
+Sampling error : 
+
+
+Sampling error is the difference between a population parameter and a sample statistic used to estimate it. For example, the difference between a population mean and a sample mean is sampling error. 
+
+</FONT>
+<P>
+
+
+
+
+<b><br>Task 2  </b><br>
+
+
+```{r}
+# .Calculate the sampling error.
+sample2 = na.omit(data$`Sample 2`)
+sample2_std = sd(sample2)
+population_std  = sd(data$Population)
+population_mean = mean(data$Population)
+
+df = length(sample2) - 1
+# (1-0.95)/2
+t95 = abs(qt(0.025,df))
+sampling_error = t95 * (sample2_std)/sqrt(length(sample1))
+print(paste("sampling error is ",sampling_error))
+
+#Calculate the 92% confidence intervals for the sample mean. For this, you need to:
+##Margin of error = Critical value x Standard error of the sample.
+
+#Standard error =  sample standard deviation / squareroot(sample size)
+alpha92  = (1-0.92)/2
+tscore92 =abs(qt(alpha92,df))
+#SE92 =  sample2_std/sqrt(length(sample2))
+
+Marginerror92 = tscore92*sample2_std/sqrt(length(sample2))
+conf92_lower_limit =  mean(sample2) - Marginerror92
+conf92_upper_limit = mean(sample2) + Marginerror92
+conf92_width = conf92_upper_limit - conf92_lower_limit
+
+#Calculate the 96% confidence intervals for the sample mean. For this, you need to:
+
+alpha96  = (1-0.96)/2
+tscore96 =abs(qt(alpha96,df))
+
+Marginerror96 = tscore96*sample2_std/sqrt(length(sample2))
+conf96_lower_limit =  mean(sample2) - Marginerror96
+conf96_upper_limit = mean(sample2) + Marginerror96
+conf96_width = conf96_upper_limit - conf96_lower_limit
+
+#Calculate the 98% confidence intervals for the sample mean. For this, you need to:
+
+alpha98  = (1-0.98)/2
+tscore98 =abs(qt(alpha98,df))
+Marginerror98 = tscore98*sample2_std/sqrt(length(sample2))
+conf98_lower_limit =  mean(sample2) - Marginerror98
+conf98_upper_limit = mean(sample2) + Marginerror98
+conf98_width = conf98_upper_limit - conf98_lower_limit
+
+
+data92 = c(Marginerror92,conf92_lower_limit,mean(sample2),conf92_upper_limit,conf92_width,population_mean)
+data96 =c(Marginerror96,conf96_lower_limit,mean(sample2),conf96_upper_limit,conf96_width,population_mean)
+data98 = c(Marginerror98,conf98_lower_limit,mean(sample2),conf98_upper_limit,conf98_width,population_mean)
+conftable = matrix(c(data92,data96,data98),nrow= 3, byrow = TRUE)
+
+rownames(conftable) = c("92% confidence interval","96% confidence interval","98% confidence interval")
+colnames(conftable) = c("Margin of Error","Confidence interval upper limit","Sample mean","Cofidence interval lower limit","confidence interval width","population mean")
+
+knitr::kable(conftable, caption = "Confidence intervals for the sample 2 with frequency less than 30.",caption.placement = "top")
+
+
+
+```
+<P>
+<FONT SIZE = 3>
+<B>Observation 2</B>: 
+
+The value of sample 2 is 30. However, if the sample size is small (30), we must adapt and use a t-value rather than a Z score to  in order to account for the smaller sample size and using the sample SD.  
+</FONT>
+<P>
+
+
+<b><br>Task 3 </b><br>
+
+
+```{r}
+#Use sample 3 (n = 1500) to calculate the 90% confidence interval for the sample proportion that are lower than 1.5.
+sample3 = na.omit(data$`Sample 3`)
+sample3_lessthan1.5 = sample3[sample3<1.5]
+
+alpha90  = (1-0.90)/2
+Zscore90 = qnorm(1-alpha90)
+
+phat = length(sample3_lessthan1.5) / length(sample3)
+qhat = 1-phat
+Marginerror90 = Zscore90* sqrt(phat*qhat/length(sample3))
+conf90_lower_limit =  phat - Marginerror90
+conf90_upper_limit = phat + Marginerror90
+print(paste("90 percent confidence interval for sample properotion that are lower than 1.5 is: ","Lower limit", conf90_lower_limit,"uppper limit", conf90_upper_limit))
+
+
+#Calculate the population proportion of success that are lower than 1.7.
+#3. Calculate the population proportion of failure.
+#4. Calculate the sample proportion of success that are lower than 1.7.
+#5. Calculate the sample proportion of failure
+
+population_lessthan1.7 = data$Population[data$Population < 1.7]
+
+population_proportion_of_sucess = length(population_lessthan1.7)/length((data$Population))
+
+population_proportion_of_failure = 1 - population_proportion_of_sucess
+
+print(paste("population proportion of Sucess that are lower than 1.7",population_proportion_of_sucess))
+print(paste("population proportion of Failure that are lower than 1.7",population_proportion_of_failure))
+
+sample3_lessthan1.7 = sample3[sample3 < 1.7]
+
+sample3_phat_for_lessthan1.7 = length(sample3_lessthan1.7)/length(sample3)
+
+sample3_qhat_for_lessthan1.7 = 1- sample3_phat_for_lessthan1.7
+
+print(paste("Sample proportion of Sucess that are lower than 1.7 is",sample3_phat_for_lessthan1.7))
+print(paste("Sample proportion of Failure that are lower than 1.7 is",sample3_qhat_for_lessthan1.7))
+
+
+#Calculate the Z value corresponding to the 90% , 92% , 94% confidence interval.Margin of Error,confidence interval lower limit , confidence interval upper limit.
+alpha90  = (1-0.90)/2
+Zscore90 = qnorm(1-alpha90)
+
+phat = length(sample3_lessthan1.7) / length(sample3)
+qhat = 1-phat
+Marginerror90 = Zscore90* sqrt(phat*qhat/length(sample3))
+conf90_lower_limit =  phat - Marginerror90
+conf90_upper_limit = phat + Marginerror90
+conf90_width = conf90_upper_limit - conf90_lower_limit
+
+
+alpha92  = (1-0.92)/2
+Zscore92 = qnorm(1-alpha92)
+Marginerror92 = Zscore92* sqrt(phat*qhat/length(sample3))
+conf92_lower_limit =  phat - Marginerror92
+conf92_upper_limit = phat + Marginerror92
+conf92_width = conf92_upper_limit - conf92_lower_limit
+
+
+
+alpha94  = (1-0.94)/2
+Zscore94 = qnorm(1-alpha94)
+Marginerror94 = Zscore94* sqrt(phat*qhat/length(sample3))
+conf94_lower_limit =  phat - Marginerror94
+conf94_upper_limit = phat + Marginerror94
+conf94_width = conf94_upper_limit - conf94_lower_limit
+
+
+
+data90 = c(Marginerror90,conf90_lower_limit,sample3_phat_for_lessthan1.7 ,conf90_upper_limit,conf90_width,population_proportion_of_sucess)
+data92 =c(Marginerror92,conf92_lower_limit,sample3_phat_for_lessthan1.7 ,conf92_upper_limit,conf92_width,population_proportion_of_sucess)
+data94 = c(Marginerror94,conf94_lower_limit,sample3_phat_for_lessthan1.7 ,conf94_upper_limit,conf94_width,population_proportion_of_sucess)
+conftable = matrix(c(data90,data92,data94),nrow= 3, byrow = TRUE)
+
+rownames(conftable) = c("92% confidence interval","94% confidence interval","96% confidence interval")
+colnames(conftable) = c("Margin of Error","Confidence interval upper limit","Sample proportion value","Cofidence interval lower limit","confidence interval width","population proportion value")
+
+knitr::kable(conftable, caption = "Confidence intervals for the sample 3 proportion lower than 1.7.",caption.placement = "top")
+
+
+
+```
+<P>
+<FONT SIZE = 3>
+<B>Observation 3 </B>
+We obtained the CI levels for a categorically proportioned sample for the current sample3. In this situation, a 90% confidence level associated with the Confidence interval (0.878, 0.905) means that the percentage of times you may predict a value under 1.7 with a 90% confidence level is between 87.8 and 90.5.
+<BR>
+The population success rate is within all of the confidence ranges we calculated for the sample success rate. When compared to the probability, margin errors are quite minimal, showing that sample3 is a very excellent representation of the complete population.
+</FONT>
+<P>
+<BR>
+
+
+<b><br>Task 4 </b><br>
+
+
+```{r}
+sample4 = na.omit(data$`Sample 4`)
+
+population_variance = var(data$Population)
+sample4_variance = var(sample4)
+
+print(paste("The population variance is ",population_variance))
+print(paste("The Sample variance is ", sample4_variance))
+
+# 90% confidence intervals for the sample4 variance.
+alpha90  = (1-0.90)/2
+df =length(sample4)-1
+chisquare_left =   qchisq(alpha90, df)
+chisquare_right = qchisq(1-alpha90, df)
+print(paste("",chisquare_right, chisquare_left))
+conf90_lower_limit = (df * sample4_variance)/chisquare_right
+conf90_upper_limit = (df*sample4_variance)/chisquare_left
+conf90_width = conf90_upper_limit - conf90_lower_limit
+# 94% confidence intervals for the sample4 variance.
+alpha94  = (1-0.94)/2
+df =length(sample4)-1
+chisquare_left =   qchisq(alpha94, df)
+chisquare_right = qchisq(1-alpha94, df)
+print(paste("",chisquare_right, chisquare_left))
+conf94_lower_limit = (df * sample4_variance)/chisquare_right
+conf94_upper_limit = (df*sample4_variance)/chisquare_left
+conf94_width = conf94_upper_limit - conf94_lower_limit
+# 98% confidence intervals for the sample4 variance.
+alpha98  = (1-0.98)/2
+df =length(sample4)-1
+chisquare_left =   qchisq(alpha98, df)
+chisquare_right = qchisq(1-alpha98, df)
+print(paste("",chisquare_right, chisquare_left))
+conf98_lower_limit = (df * sample4_variance)/chisquare_right
+conf98_upper_limit = (df*sample4_variance)/chisquare_left
+conf98_width = conf98_upper_limit - conf98_lower_limit
+
+
+
+data90 = c(conf90_lower_limit,sample4_variance,conf90_upper_limit,conf90_width,population_variance)
+data94 = c(conf94_lower_limit,sample4_variance,conf94_upper_limit,conf94_width,population_variance)
+data98 =c(conf98_lower_limit,sample4_variance ,conf98_upper_limit,conf98_width,population_variance)
+
+conftable = matrix(c(data90,data94,data98),nrow= 3, byrow = TRUE)
+
+rownames(conftable) = c("90% confidence interval","94% confidence interval","98% confidence interval")
+colnames(conftable) = c("Confidence interval lower limit","Sample variance value","Cofidence interval upper limit","confidence interval width","population variance value")
+
+knitr::kable(conftable, caption = "Confidence intervals for the sample 4 variances.",caption.placement = "top")
+
+
+
+
+```
+<P>
+<FONT SIZE = 3>
+<B>Observation 4</B>
+
+
+From the above table we can conclude  population variance is with in the confidence interval for 95% confidence interval only
+In statistics, the variance and standard deviation of a variable are as important as the mean. For example, when products that fit together (such as pipes) are manufactured, it is important to keep the variations of the diameters of the products as small as possible; otherwise, they will not fit together properly and will have to be scrapped. 
+To calculate these confidence intervals, a new statistical distribution is needed. It is called the chi-square distribution.
+The chi-square variable is similar to the t variable in that its distribution is a family of curves based on the number of degrees of freedom. The symbol for chi-square is x2 (Greek letter chi, pronounced “ki”). 
+
+</FONT>
+<P>
+
+
+
+<b><br>Task 5 </b><br>
+```{r}
+#  H0: μ=1.05 H1: μ ≠ 1.05
+sample5 = na.omit(data$`Sample 5`)
+population_mean = mean(data$Population)
+population_std = sd(data$Population)
+sample5_size = length(sample5)
+sample5_mean = mean(sample5)
+
+alpha95  = (1-0.95)/2
+
+z95_upper_limit = qnorm(alpha95)
+z95_lower_limit = -(z95_upper_limit)
+
+ztest_statistic = (sample5_mean - 1.05)/(population_std/sqrt(sample5_size))
+
+pvalue = 2 * pnorm(ztest_statistic) 
+
+
+if(ztest_statistic > 0) {
+  print(paste(" Ztest statistic  is positive with value : ", ztest_statistic))
+  if(ztest_statistic >z95_upper_limit){
+    print(paste(" It is higher than then upper limit (right) critical value"))
+    }else{
+      print(paste(" It is not higher than then upper limit (right) critical value"))
+    }
+  }else { print(paste(" Ztest statistic  is positive with value : ", ztest_statistic))
+  if(ztest_statistic < z95_lower_limit){
+    print(paste(" it smaller than then lower limit (left) critical value"))}
+    else{
+      print(paste(" It is not  smaller than then lower limit (left) critical value"))
+    }
+  }
+
+if(pvalue > alpha95) {
+  print(paste("Reject Null hypothesis"))
+  
+}else
+{
+  print(paste("Do not reject null hypothesis"))
+}
+ 
+ 
+ 
+ 
+```
+<P>
+<FONT SIZE = 3>
+<B>Observation 5</B>:
+
+We can reject null hypothesis ,as we have evidence to reject it. 
+
+</FONT>
+<P>
+<b><br>Task 6  </b><br>
+
+```{r}
+# Use α = 0.01. H0: μ = 1.05 H1: μ > 1.05
+sample6 = na.omit(data$`Sample 6`)
+population_mean = mean(data$Population)
+sample6_mean = mean(sample6)
+sample6_size = length(sample6)
+sample6_std = sd(sample6)
+alpha = 0.01
+df =sample6_size -1
+
+
+tscore_right_tail = abs(qt(alpha,df))
+
+
+
+ttest_statistic = (sample5_mean - 1.05)/(sample6_std/sqrt(sample6_size))
+
+t.test(sample6,alternative = ("greater"), mu = 1.05)
+
+```
+
+<P>
+<FONT SIZE = 3>
+<B>Observation 6 </B>
+
+P values is greater than alpha, there is enough evidence to reject Null Hypothesis.
+   
+</FONT>
+<P>
+
+<b><br>Conclusion:</b><br>
+The population mean decreases in the predicted population mean for both task-1 and task-2. This demonstrates that the samples are fair and representative of the population.
+When examining the sample3 for proportion confidence intervals, it was discovered that population proportions were falling inside the CI values calculated using sample3. The sample's accuracy in estimating the parameter of interest is indicated by the sample's modest margin of error.
+The population variance is not within the 90 and 94 percent confidence intervals, but rather inside the 98 percent interval, indicating that the new data contradicts the established conclusion.
+Sample5's p test and z test agree, however the NULL hypothesis is not rejected. The pvalues are the easiest to estimate when testing hypotheses.
+
+
+
+<b><br>Bibliography:</b><br>
+
+Stat trek Teach yourself statistics.(n.d).Retrieved November 29,2021,from https://stattrek.com/statistics/dictionary.aspx?definition=confidence_level
+
+Brilliant Hypothesis Testing.(n.d).Retrieved November 29,2021,from https://brilliant.org/wiki/hypothesis-testing/
+ 
+Introduction. Confidence Intervals. (n.d.). Retrieved November 29, 2021, from https://sphweb.bumc.bu.edu/otlt/mph-modules/bs/bs704_confidence_intervals/bs704_confidence_intervals_print.html. 
+
+
+S.3.3 hypothesis testing examples: Stat online. PennState: Statistics Online Courses. (n.d.). Retrieved November 29, 2021, from https://online.stat.psu.edu/statprogram/reviews/statistical-concepts/hypothesis-testing/examples. 
+
+
+Using R: Chapter 8 hypothesis testing - one sample. (n.d.). Retrieved November 29, 2021, from https://cosmosweb.champlain.edu/people/stevens/WebTech/R/Chapter-8-R.pdf
+
+<b><br>Appendix</b><br>
+1.M3 Project Data.xlsx<br>
+2.Project3_Vaidehi.Rmd
+

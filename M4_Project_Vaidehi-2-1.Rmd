@@ -1,0 +1,265 @@
+
+<CENTER>
+<FONT SIZE = 5, COLOR = "#A11515">
+<B>Module 4 PROJECT REPORT</B>
+<BR>
+Probability Theory and Introductory Statistics, CRN: 70487
+<BR>
+Student: vaidehi Patole
+<BR>
+Instructor: Dee Chiluiza Reyes
+<BR>
+12/04/2021
+</FONT></CENTER>
+<P>
+
+<P>
+<BR><B>
+<FONT SIZE = 4, COLOR = "#A11515">
+PART 1  INTRODUCTION
+</FONT>
+</B>
+<P>
+<FONT SIZE = 3>
+<B> Hypothesis testing</B>
+
+The process of drawing inferences about a population based on data from a sample of that population is known as statistical inference. Hypothesis testing is a technique for determining how well observed results in a sample can be extrapolated to the larger population from which the sample was drawn. It's used to evaluate the sample's evidence and to create a framework for making population-related decisions. The investigator formulates a specific hypothesis, evaluates data from the sample, and determines whether the findings support the hypothesis. Before performing this test, always define the Null Hypothesis (Ho) and the Alternate Hypothesis (Alt) (Ha). Then we conduct the testing with the goal of rejecting the Null hypothesis. If we can find sufficient evidence and strength in our data, we can reject the Null Hypothesis and accept the alternative Hypothesis
+
+<B>Example 1 hypothesis testing</B>
+
+Consider a company that wants to launch a new marketing campaign to increase sales during a downturn. This could be a very expensive operation, depending on the size and complexity of the campaign. As a result, the organization might decide to test the campaign on a smaller scale to see how it goes.
+In this case, the hypothesis being tested might be something along the lines of: "If the company launches a new marketing campaign, sales will increase." It may even be possible to estimate the amount of sales growth the company anticipates as a result of the campaign. Based on the results of the trial campaign, the company would know whether it makes sense to expand the effort.
+
+
+<B>Example 2 hypothesis testing</B>
+
+Consider the executive team of a company that consistently generates $12 million in monthly revenue. They want to know if lowering their service prices will attract more clients and, as a result, increase income.
+In this situation, the alternative hypothesis may be something like this: "If we lower the price of our flagship service by 5%, we'll notice a rise in sales and generate revenues of more than $12 million in the next month."
+The null hypothesis, on the other hand, predicts that revenues would remain flat or even drop from the current level of $12 million.
+
+<B>Application of t test </B>
+
+A doctor might want to know if a new medicine lowers blood pressure significantly more than the current standard treatment.
+To test this, he asks 20 people to take part in a one-month study in which they individually take the new medicine. He can do a one-sample t-test to see if the mean blood pressure reduction is substantially greater than the mean reduction from the current standard medicine.
+
+
+
+<B>Application of z test </B>
+
+Let's say you know your IQ is 120. You might be curious how this score compares to that of other people. It's now a fairly simple procedure. We'll start with what's known as the conversion formula. We're going to convert IQ scores to z scores. We know how to calculate probabilities for z scores, so we can calculate a probability for any IQ score if we know the z score.
+
+
+<B>Application of F test </B>
+
+The F-test is used to determine whether two or more means are equal. The technique known as ANOVA is used to test for equality of several means.
+Assume that a researcher wants to test the efficacy of a drug at three different doses: 100 mg, 250 mg, and 500 mg. A test is performed on fifteen human subjects chosen at random, with five subjects receiving each drug level.
+The ANOVA technique must be used to see if there are significant differences in efficacy between the three levels of the drug. The F-test is the test that is used for this.
+
+```{r}
+library(MASS)
+data(cats, package="MASS")
+
+```
+
+
+<BR>
+<P>
+<B><FONT SIZE = 4>
+Task 1: 
+</FONT></B>
+
+```{r}
+# Task 1
+data<-cats
+M_data<-subset(data,subset = (data$Sex=="M"))
+F_data<-subset(data,subset = (data$Sex=="F"))
+N1 = length(M_data$Bwt)
+N2= length(F_data$Bwt)
+M_mean = mean(M_data$Bwt)
+F_mean = mean(F_data$Bwt)
+M_sd=sd(M_data$Bwt)
+F_sd=sd(F_data$Bwt)
+tttest= ((M_mean-F_mean)-0)/sqrt((M_sd^2/N1)+(F_sd^2/N2))
+tttest
+alpha=0.01
+
+# calculating degree of freedom
+
+df=N2-1
+df
+
+# calculating critical value
+
+CR=qt(1-alpha, df)
+CR
+
+
+
+```
+<P>
+<FONT SIZE = 3>
+<B>Observation 1</B>
+The average body weight of Male cats is significantly higher than average body weight of female cats because test value is greater than the critical value
+
+</FONT>
+<P>
+<P>
+
+
+
+<BR>
+<P>
+<B><FONT SIZE = 2>
+Task 2: 
+</FONT></B>
+```{r}
+#Task 2
+N1 = length(M_data$Hwt)
+N2= length(F_data$Hwt)
+M_mean = mean(M_data$Hwt)
+F_mean = mean(F_data$Hwt)
+M_sd=sd(M_data$Hwt)
+F_sd=sd(F_data$Hwt)
+tttest= ((M_mean-F_mean)-0)/sqrt((M_sd^2/N1)+(F_sd^2/N2))
+tttest
+alpha=0.01
+
+# calculating degree of freedom
+
+df=N2-1
+df
+
+# calculating critical value
+
+CR=qt(1-alpha, df)
+CR
+
+
+```
+<P>
+<FONT SIZE = 3>
+<B>Observation 2</B>
+The heart weight of male cats is higher than the female weight of heart because test value is greater than the critical value
+
+</FONT>
+<P>
+<P>
+
+
+
+<BR>
+<P>
+<B><FONT SIZE = 4>
+Task 3: 
+</FONT></B>
+```{r}
+# Task 3
+d1 <- c(4.6, 7.8, 9.1, 5.6, 6.9, 8.5, 5.3, 3.2, 4.4, 4.5, 9.3, 7.7)
+
+d2 <- c(6.6, 7.7, 9.6, 6.2, 7.8, 8.7, 5.9, 6.5, 5.8, 6.5, 8.9, 7.9)
+
+n <- length(d1)
+diff <- d1-d2
+diff_sum <- sum(diff)
+
+dbar <-mean(diff)
+sq_diff<- sum(diff^2)
+
+sd = sqrt(((n*sq_diff)-(diff_sum^2))/(n*(n-1)))
+
+CR <-  qt(0.95,n-1)
+
+tttest <- (dbar-0)/(sd/sqrt(n))
+
+tttest < CR
+
+```
+<P>
+<FONT SIZE = 3>
+<B>Observation 3</B>
+As the null hypothesis has been rejected so we can conclude that the sleeping quality has been increased due to meditation workshop 
+
+</FONT>
+<P>
+<P>
+
+
+<BR>
+<P>
+<B><FONT SIZE = 4>
+Task 4: 
+</FONT></B>
+
+```{r}
+# Task 4
+CR <-  qt(0.01,n-1)
+tttest > CR
+
+```
+<P>
+<FONT SIZE = 3>
+<B>Observation 4</B>
+Like in the task 3 null hypothesis has been rejected so we can conclude that sleeping quality has been increased due to the meditation workshop
+
+</FONT>
+<P>
+<P>
+
+
+
+<BR>
+<P>
+<B><FONT SIZE = 4>
+Task 5: 
+</FONT></B>
+```{r}
+# Task 5
+c1 <- c(1.01, 1.04, 1.04, 1.20, 1.38, 1.43, 1.51, 1.70, 1.96, 1.99, 2.02, 2.04, 2.12, 2.13, 2.22, 2.25, 2.29, 2.32, 2.38, 2.42, 2.45, 2.46, 2.47, 2.48, 2.58, 2.64, 2.75, 2.81)
+
+c2 <- c(2.19, 2.29, 2.50, 2.58, 2.90, 3.20, 3.22, 3.37, 3.50, 3.84, 3.88, 4.00, 4.11, 4.51, 4.71, 4.80, 3.90, 3.38, 3.44, 3.77, 3.25, 4.54, 3.56)
+
+n1 <-length(c1)
+n2 <- length(c2)
+
+var1 <-(sd(c1))^2
+var2 <- (sd(c2))^2
+
+F_test <- var1/var2
+alpha <-0.02
+
+CR <-  qt(0.01,n1-1,n2-2)
+
+F_test > CR
+
+
+```
+<P>
+<FONT SIZE = 3>
+<B>Observation 5</B>
+We conclude that there is no significant difference between the variance value of the samples provided.
+
+
+</FONT>
+<P>
+<P>
+
+
+<b><br>Conclusion:</b><br>
+In this project we get to know the difference between two means for the independent samples, using the t-test . the difference between two means for dependent samples and the difference between two variance or standard deviations
+
+
+<b><br>Bibliography:</b><br>
+1 .Hypothesis testing by Roger B. Davis and Kenneth J. Mukamal publish on 5th September 2006.Retrived December 4 , 2021,  from https://www.ahajournals.org/doi/full/10.1161/circulationaha.105.586461
+
+2.Harvard business school. (n. d). Retrieved  December 4,2021 from https://online.hbs.edu/blog/post/hypothesis-testing
+
+3.Statistics. simplified statlogy published on August 23,2021 by zach. Retrieved December 4,2021 https://www.statology.org/z-score-real-life-examples/
+
+4.Explore think outside of the box F test. (n. d). Retrieved December 4,2021 from
+https://explorable.com/f-test
+
+
+
+<b><br>Appendix</b><br>
+
+Project4_Vaidehi.Rmd

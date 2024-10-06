@@ -1,0 +1,387 @@
+<CENTER>
+<FONT SIZE = 5, COLOR = "#A11515">
+<B>Module 5 PROJECT REPORT</B>
+<BR>
+Probability Theory and Introductory Statistics, CRN: 70487
+<BR>
+Student: vaidehi Patole
+<BR>
+Instructor: Dee Chiluiza Reyes
+<BR>
+12/04/2021
+</FONT></CENTER>
+<P>
+<CENTER>
+<FONT SIZE = 8, COLOR = "0B836F">
+<B> Linear Regression </B>
+
+</FONT></CENTER>
+<P>
+<BR><B>
+<FONT SIZE = 4, COLOR = "#DF7526">
+ INTRODUCTION
+</FONT>
+</B>
+<P>
+<FONT SIZE = 3>
+<B> </B>
+
+<b>Correlation:</b><br>
+Correlation is a statistical measure that expresses the degree to which two variables are linearly connected (meaning they change together at a constant rate). It's a typical approach for describing simple relationships without stating cause and effect.
+Correlations are useful for describing simple data correlations. Consider the following scenario: you are looking at a dataset of campsites in a mountain park. You're curious if there's a link between the elevation of the campsite (how high up the mountain it is) and the typical high temperature in the summer.
+You have two measurements for each campsite: height and temperature. When you use a correlation to examine these two variables across your sample, you can establish a linear relationship: as elevation increases, temperature decreases. They are inversely connected.
+
+
+<b>Simple linear regression:</b><br>
+To evaluate the association between two quantitative variables, simple linear regression is performed. You can use simple linear regression when you want to know:
+
+1.	The strength of the link between two variables (e.g. the relationship between rainfall and    soil erosion).
+
+2.	 At a given value of the independent variable, the value of the dependent variable (e.g. the amount of soil erosion at a certain level of rainfall).
+
+Example
+You are a social scientist who is interested in the connection between income and happiness. You poll 500 people with earnings ranging from $15k to $75k and ask them to rate their level of happiness on a scale of 1 to 10.
+Because your independent variable (income) and dependent variable (happiness) are both quantitative, you can perform a regression analysis to check if they have a linear connection.
+
+
+<b>History:</b><br>
+Francis Galton invented correlation in late 1888, when he noticed a common thread in three different scientific topics he was examining. Karl Pearson's widely known linkage of correlation with a retreat into a recess at Naworth Castle is addressed and contrasted with Galton's own 1890 version of the time of discovery. The events that prompted Galton to write the account are discussed.
+
+
+<b>Practical Application In Industry:</b><br>
+Correlation is frequently used in portfolio management (Portfolio management is the art and science of selecting and overseeing a group of investments that meet the long-term financial objectives and risk tolerance of a client, a company, or an institution) to assess the degree of diversification among the assets in a portfolio. To help establish the most optimal frontier, modern portfolio theory (MPT) (The modern portfolio theory (MPT) is a practical method for selecting investments in order to maximize their overall returns within an acceptable level of risk) employs a measure of the correlation of all the assets in a portfolio. This notion aids in the optimization of expected returns versus a given amount of risk. Including assets with low correlation to one another helps to lower overall risk in a portfolio.
+Nonetheless, correlation can shift over time. It can only be measured in the past. Two assets that have previously had a high degree of connection can become uncorrelated and begin to move independently. This is one of MPT's flaws; it presupposes constant relationships between assets.
+
+
+
+
+
+
+
+
+
+
+
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+library("readxl")
+library("dplyr")
+library("readr")
+library("knitr")
+library("kableExtra")
+library("tidyverse")
+library("vcd")
+library("lessR")
+library("RColorBrewer")
+library("ggplot2")
+
+
+
+
+```
+
+
+
+
+<b><br>Task 1  </b><br>
+
+Understanding the dataset by exploratory analysis of data:
+
+
+```{r}
+
+str(mpg)
+manufacturer = table(mpg$manufacturer)
+model = table(mpg$model)
+trans  = table(mpg$trans)
+drv = table(mpg$drv)
+fl = table(mpg$fl)
+class = table(mpg$class)
+
+
+print(paste("Analysis of the Categorial manufacturer : "))
+
+manufacturer
+
+
+print(paste("Analysis of the Categorial model : "))
+model
+print(paste("Analysis of the Categorial transmission : "))
+trans
+
+print(paste("Analaysis of the categorical variable -drivevtrain"))
+
+drv
+
+print(paste("Analysis of the categorical variable -fuel type-"))
+
+fl
+
+print(paste("Analysis of categorical variable  -class-"))
+
+class 
+
+```
+<b><br>Observation </b><br>
+<p>From the above code snippet and output, we can come to conclusion that this data is related to cars. More over variables HWY, FL, CTY hints that data about analyzing the mileage of data. Therefore We can assume that the dataset can be used to estimate the fuel economy of cars and presence of year variable and car manufacturer and model type variables we can add further that fuel economy of the cars across different maufacturers and models across a time period is analysed . To confirm we will check online dataset repository and finalize the dataset. </p>
+
+<p>Following is the further info regarding the dataset:
+Estimated Fuel Economy 
+The EPA's fuel efficiency ratings are intended to offer a solid foundation for comparing automobiles. 
+Except for plug-in hybrids, the majority of cars in this guide offer three fuel efficiency estimates: 
+• A "city" estimate that represents urban driving, in which a vehicle is started in the morning (after being parked all night) and driven in stop-and-go traffic
+• A "highway" estimate that represents a mixture of rural and interstate highway driving in a warmed-up vehicle, typical of longer trips in free-flowing traffic (45 percent ) 
+To provide for fair comparisons, all vehicle estimates are based on laboratory testing under defined settings.</p>
+
+
+<b><br>Task 1.2  </b><br>
+```{r}
+par(mfrow=c(1,2) )
+par(cex=0.5, mai=c(1,1,2,1))
+y= barplot(manufacturer,horiz = TRUE,las =1,
+        main="Manufacturer variable frequency analysis",
+        xlab="Frequency",col=brewer.pal(9,"Set1"),border="white",
+xlim=c(0,50))
+text(manufacturer+2 ,y,labels = as.character(manufacturer),las =1)
+
+class = table(mpg$class)
+
+pie(class, main = "Manufacturer class analysis")
+```
+
+
+<b><br>Observation</b><br>
+
+From the above the barplot and piechart we can deduce the following 
+
+<br>Dataset contains the cars from eight different manufacturers. highest number of cars belong to dodge where as Lincoln cars are the lowest.Toyota stands second in this list.<br>
+
+<br>From the piechart we can see that SUV are highest and mini van are the lowest. we can assume many people preferred SUV, may be its mileage is high when comapred to others<br>
+
+
+
+<b><br>Task 1.3 </b><br>
+```{r}
+coefficient_of_correlation = cor(mpg$displ ,mpg$cyl)
+
+print(paste("The coefficients of correlation between displacement and cylinders is ",coefficient_of_correlation))
+            
+displacement = mpg$displ
+cylinders =  mpg$cyl
+linear_model = lm(displacement~cylinders)
+
+coefficient_of_determination = summary(linear_model)$r.squared 
+
+print(paste("The coefficients of correlation between displacement and cylinders is ",coefficient_of_determination))
+            
+
+
+
+
+
+```
+
+<b><br>Observation </b><br>
+The correlation coefficient is a statistical measure of the strength of the association between two variables' relative movements. The values range from -1.0 to 1.0. A computed value greater than 1.0 or less than -1.0 indicates that the correlation measurement was incorrect. A correlation of -1.0 indicates that there is a perfect negative connection, whereas a correlation of 1.0 indicates that there is a perfect positive correlation. A correlation of 0.0 indicates that there is no linear link between the two variables' movements.
+
+The correlation coefficientin this scenario suggests a strong relationship between displacement and cylinders of the car. There may be  a direct cause-and-effect relationship between the variables.
+
+
+
+The R2 score, also known as the coefficient of determination, is used to evaluate the efficacy of a linear regression model. The amount of variance in the output dependent characteristic that can be predicted based on the input independent variable (s). It's used to examine how effectively the model reproduces observed findings, based on the ratio of total deviation of results explained by the model.
+
+In this current scenario, R2 = 0.865 ;86 percent ofthevariation of displacement isduetothe variation of cylinders; 14% is due to chance
+
+
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+library("DescTools")
+```
+
+
+
+
+<b><br>Task 1 .5 </b><br>
+
+```{r}
+
+plot(cars$speed, cars$dist, main="Scatterplot Example", 
+   xlab="Speed of the car ", ylab="Distance of the car", pch=2)
+
+abline(lm(cars$dist~ cars$speed), col="#1A8417",lwd = 3) # regression line (y~x)
+text( 20, 18, "Regression line")
+abline(h = mean(cars$dist), col = "#16196C", lwd = 3, lty=1)
+text( 11 , 50, "mean distance")
+abline(v = mean(cars$speed), col = "#843765", lwd = 3, lty=1  )
+text( 17 ,100 , "mean speed")
+
+```
+<b><br>Observation </b><br>
+From the above scatter plot following findings can be drawn 
+Miles per hour is a continuous quantitative variable.
+Braking distance is a continuous quantitative variable.
+Mean speed is 16 mph
+mean distance is 42
+There might be a linear relationship between the two variables, but there is a bit of a curve in the data .The strong relationship between the two variables suggests that braking distance can be accurately predicted from speed. 
+As the data is spread, smooth line fits the data than a linear. However Standard error is low for this.
+
+
+<b><br>Task 1.6 </b><br>
+```{r}
+#distance = a+Speed ∗b
+
+linearmodel_distance = lm(cars$dist~cars$speed) #the linear regression
+summary(linearmodel_distance)
+ 
+```
+
+
+
+```{r}
+#distance = a+Speed ∗b
+
+distance_for_30mph = (-17.5791) + 30 * (3.9324)
+
+print(paste(" The stopping distance for vechile driving at 30 miles per hour is ", distance_for_30mph))
+
+```
+<b><br>Observation </b><br>
+From the above we can see that at 100 meters car will stop when the brakes are applied at 30 miles per hour. Moreover we can infer that if the car speed is approximately 0.547 miles, if the brakes are applied then car stops immediately
+
+
+
+
+
+
+
+
+
+        
+<b><br>Task 2.2  </b><br>
+```{r message=FALSE, warning=FALSE}
+
+V_Shaped = sum( mtcars$vs == 0)
+
+#V_Shaped 
+
+Straight_engine = sum(mtcars$vs == 1)
+
+#Straight_engine 
+
+
+Total = length(mtcars$vs)
+
+V_shapedpercent  = (V_Shaped/length(mtcars$vs))*100
+
+Straight_enginepercent = (Straight_engine/length(mtcars$vs))*100
+
+engine = matrix(c(V_Shaped,Straight_engine,Total,V_shapedpercent,Straight_enginepercent,100),byrow = TRUE,nrow =2)
+rownames(engine) = c("Frequencies", "Percentages")
+colnames(engine) =  c("V Shaped", "Straight Engine", "Total")
+    
+knitr::kable(engine, caption = "Frequency of cars with V-shaped versus Straight engines",full_width = T)%>%kable_styling()%>%
+ kable_material(c("striped", "hover"))
+
+
+
+engines = mtcars$vs
+
+PieChart(engines, hole = 0, values = "%", main = "Frequency of cars with V-shaped versus Straight engines")
+
+```
+<b><br>Observation </b><br>
+From the above table we can see that Vshaped engines are higher than straight engines. There are total 32 cars out of that 18 are Vshaped and 14 are straight engine. the data is collected properly since the both the classes are approximately equal
+
+
+ 
+ <b><br>Task 2.4  </b><br>
+```{r}
+coefficient_of_correlation = cor(mtcars$mpg ,mtcars$wt)
+
+print(paste("The coefficients of correlation between mileage  and weight is ",coefficient_of_correlation))
+            
+
+linear_model = lm(mtcars$mpg~mtcars$wt)
+
+coefficient_of_determination = summary(linear_model)$r.squared 
+
+print(paste("The coefficients of correlation between mileage and weight is ",coefficient_of_determination))
+            
+
+
+```
+
+<b><br>Observation </b><br>
+
+In this weight is independant and miles per gallon is dependant
+
+The correlation coefficient is a statistical measure of the strength of the association between two variables' relative movements. The values range from -1.0 to 1.0. A computed value greater than 1.0 or less than -1.0 indicates that the correlation measurement was incorrect. A correlation of -1.0 indicates that there is a perfect negative connection, whereas a correlation of 1.0 indicates that there is a perfect positive correlation. A correlation of 0.0 indicates that there is no linear link between the two variables' movements.
+
+The correlation coefficientin this scenario suggests a strong negative relationship between miles per gallon and weight of the car. There may be  a direct cause-and-effect relationship between the variables.
+
+
+
+The R2 score, also known as the coefficient of determination, is used to evaluate the efficacy of a linear regression model. The amount of variance in the output dependent characteristic that can be predicted based on the input independent variable (s). It's used to examine how effectively the model reproduces observed findings, based on the ratio of total deviation of results explained by the model.
+
+In this current scenario, R2 = 0.75 ;75 percent of thevariation of miles per gallon is due to the variation of weights; 25% is due to chance
+
+ 
+
+<b><br>Task 2.5  </b><br>
+```{r}
+
+plot(mtcars$wt, mtcars$mpg, main="Regresssion analysis of Weight and Miles per gallon of a car", 
+   xlab="Weight of the car ", ylab="Miles per gallon")
+
+val = lm(mtcars$mpg ~ mtcars$wt)
+abline(val, col="yellow",lwd = 3) 
+text( 4.5, 12, "Regression line")
+abline(h = median(mtcars$mpg), col = "red", lwd = 3, lty=1)
+text( 2,20,  "median miles per gallon")
+abline(v = median(mtcars$wt), col = "green", lwd = 3, lty=1  )
+text( 3.6 ,30, "median weight")
+
+```
+
+<b><br>Task 2.5  </b><br>
+```{r}
+linearmodel_miles_per_gallon = lm(mtcars$mpg~mtcars$wt) #the linear regression
+summary(linearmodel_miles_per_gallon)
+```
+
+
+
+```{r}
+#miles per gallon  = a+Weight ∗b
+
+miles_for_2000pounds = (37.2851) + (-5.3445) *(2000)
+
+print(paste(" The miles per gallon for a car with wieght 2000 pounds   is ", miles_for_2000pounds))
+
+
+```
+
+<b><br>Observation </b><br>
+From the output we can deduce that with 2000 pounds weoght car cannot move. From the above equation if we solve for mileage = 0 , we get 7 pounds indicating if the car weight is more than 7 pounds , then it cannot move. However this cannot be entirely true, as car motion can be decided by using other variale like horse power (hp) and number of cylinders, and displacement. 
+
+
+<b><br>Conclusion  </b><br> 
+
+However, no one test can accurately forecast fuel efficiency for all drivers in all conditions. The following things, for example, can reduce your vehicle's fuel economy: 
+• Excessive idling, accelerating, and braking in stop-and-go traffic • Excessive idling, accelerating, and braking in cold weather (engines are more efficient when warmed up). Short travels have a stronger influence. 
+• Driving with a heavy load or with the air conditioner on • Improperly tuned engine or under-inflated tires • Driving in rocky or hilly terrain • Using high-performance or snow tires • Using remote starters
+
+Also the data in the above examples is not linear however we are able to estimate the accurate values using regression.
+
+Eventhough there is correlation between two variables, further we need to check if the both are able to contribute towards expected output or they are jus lurking variables.
+
+
+<b><br>References </b><br>
+
+Stephen M. Stigler. "Francis Galton's Account of the Invention of Correlation." Statist. Sci. 4 (2) 73 - 79, May, 1989. https://doi.org/10.1214/ss/1177012580
+
+
+Investopedia. Correlation Coefficient by Jason Fernando on October 05,2021 . Retrieved on December 11,2021 https://www.investopedia.com/terms/c/correlationcoefficient.asp
+
+Statistical Discovery (n.d) . Retrieved on December
+11,2021https://www.jmp.com/en_us/statistics-knowledge-portal/what-is-correlation.html
+
+
